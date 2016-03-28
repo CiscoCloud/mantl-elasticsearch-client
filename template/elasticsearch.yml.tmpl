@@ -1,0 +1,11 @@
+cluster.name: {{env "ELASTICSEARCH_CLUSTER_NAME"}}
+node.master: false
+node.data: false
+network.host: 0.0.0.0
+network.publish_host: {{env "PUBLISH_HOST"}}
+discovery.zen.ping.multicast.enabled: false
+{{$es := service (env "ELASTICSEARCH_SERVICE") "any"}}{{with $es -}}
+discovery.zen.ping.unicast.hosts:
+{{range $idx, $service := $es -}}
+  - "{{env "ELASTICSEARCH_SERVICE"}}.service.consul:{{.Port}}"
+{{end}}{{end}}
